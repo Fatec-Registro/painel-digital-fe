@@ -16,7 +16,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useAuth } from "@/contexts/AuthContext";
 import { Label } from "@/components/ui/label";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUp, ArrowDown, File, Download } from "lucide-react";
 
 interface AnnouncementDetailsProps {
   announcement: Announcement | null;
@@ -179,6 +179,27 @@ const AnnouncementDetails: React.FC<AnnouncementDetailsProps> = ({
                 {announcement.description}
               </p>
             </div>
+            
+            {announcement.briefingPdfUrl && announcement.briefingPdfName && (
+              <div>
+                <h3 className="font-semibold">Briefing em PDF</h3>
+                <div className="flex items-center gap-2 p-3 bg-secondary/50 rounded-lg">
+                  <File className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium flex-1">{announcement.briefingPdfName}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // In real implementation, this would download the actual PDF
+                      alert(`Baixar PDF: ${announcement.briefingPdfName}\nURL: ${announcement.briefingPdfUrl}`);
+                    }}
+                  >
+                    <Download className="h-4 w-4 mr-1" />
+                    Baixar
+                  </Button>
+                </div>
+              </div>
+            )}
             
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">

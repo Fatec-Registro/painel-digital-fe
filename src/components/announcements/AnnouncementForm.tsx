@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Upload, File, X } from "lucide-react";
 
 interface AnnouncementFormProps {
   onSubmit: (data: AnnouncementFormData) => void;
@@ -31,6 +32,8 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
   onSubmit,
   isLoading,
 }) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,9 +47,27 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
     const formData: AnnouncementFormData = {
       title: data.title,
       description: data.description,
+      briefingPdf: selectedFile || undefined,
     };
     onSubmit(formData);
     form.reset();
+    setSelectedFile(null);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type === "application/pdf") {
+      setSelectedFile(file);
+    } else if (file) {
+      alert("Por favor, selecione apenas arquivos PDF.");
+      event.target.value = "";
+    }
+  };
+
+  const removeFile = () => {
+    setSelectedFile(null);
+    const fileInput = document.getElementById("pdf-upload") as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
   };
 
   return (
@@ -87,6 +108,56 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
                 </FormItem>
               )}
             />
+            
+            <div className="space-y-2">
+              <FormLabel>Briefing em PDF (Opcional)</FormLabel>
+              <p className="text-sm text-muted-foreground">
+                Envie um briefing em PDF com as informações necessárias para a criação da arte
+              </p>
+              
+              {!selectedFile ? (
+                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
+                  <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Clique para selecionar um arquivo PDF
+                  </p>
+                  <input
+                    id="pdf-upload"
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => document.getElementById("pdf-upload")?.click()}
+                  >
+                    Selecionar PDF
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <File className="h-5 w-5 text-primary" />
+                    <span className="text-sm font-medium">{selectedFile.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                    </span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={removeFile}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+            
             <Button type="submit" disabled={isLoading} className="w-full">
               {isLoading ? "Enviando..." : "Enviar Solicitação"}
             </Button>
