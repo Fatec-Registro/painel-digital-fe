@@ -30,6 +30,8 @@ export interface Announcement {
   assignedTo?: string;
   imageUrl?: string;
   displayDuration?: number; // duration in seconds
+  briefingPdfUrl?: string;
+  briefingPdfName?: string;
 }
 
 export interface LoginFormData {
@@ -40,6 +42,7 @@ export interface LoginFormData {
 export interface AnnouncementFormData {
   title: string;
   description: string;
+  briefingPdf?: File;
 }
 
 export interface UpdateAnnouncementData {

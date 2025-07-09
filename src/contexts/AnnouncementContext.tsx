@@ -33,7 +33,7 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
     updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     requestedBy: "2", // Director
     assignedTo: "3", // Designer
-    imageUrl: "https://images.unsplash.com/photo-1751356424626-71c30ced9eec?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    imageUrl: "https://source.unsplash.com/random/1200x800/?university,event",
     displayDuration: 8
   },
   {
@@ -45,7 +45,7 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     requestedBy: "2", // Director
     assignedTo: "3", // Designer
-    imageUrl: "https://source.unsplash.com/random/?nature",
+    imageUrl: "https://source.unsplash.com/random/1200x800/?library,study",
     displayDuration: 6
   },
   {
@@ -57,6 +57,27 @@ const MOCK_ANNOUNCEMENTS: Announcement[] = [
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     requestedBy: "2", // Director
     assignedTo: "3", // Designer
+  },
+  {
+    id: "4",
+    title: "Sports Tournament",
+    description: "Create graphics for the inter-college sports tournament",
+    status: AnnouncementStatus.PENDING,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    requestedBy: "2", // Director
+  },
+  {
+    id: "5",
+    title: "Graduation Ceremony",
+    description: "Design poster for graduation ceremony with date, time and venue details",
+    status: AnnouncementStatus.PUBLISHED,
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+    requestedBy: "2", // Director
+    assignedTo: "3", // Designer
+    imageUrl: "https://source.unsplash.com/random/1200x800/?graduation,ceremony",
+    displayDuration: 7
   }
 ];
 
@@ -104,11 +125,15 @@ export const AnnouncementProvider: React.FC<{ children: React.ReactNode }> = ({ 
       
       const newAnnouncement: Announcement = {
         id: Date.now().toString(),
-        ...data,
+        title: data.title,
+        description: data.description,
         status: AnnouncementStatus.PENDING,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         requestedBy: user.id,
+        // Simulate PDF storage - in real implementation, upload to your backend
+        briefingPdfUrl: data.briefingPdf ? `mock-url/${data.briefingPdf.name}` : undefined,
+        briefingPdfName: data.briefingPdf ? data.briefingPdf.name : undefined,
       };
       
       const updatedAnnouncements = [...announcements, newAnnouncement];
